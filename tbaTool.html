@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<style>
+	/* The alert message box */
+	
+	.dupAlert {
+		padding: 20px;
+		/*background-color: #f44336;  Red */
+		background-color: #ff9800;
+		color: white;
+		margin-bottom: 15px;
+	}
+	
+	.lengthAlert {
+		padding: 20px;
+		background-color: #f44336;
+		color: white;
+		margin-bottom: 15px;
+	}
+	/* The close button */
+	
+	.closebtn {
+		margin-left: 15px;
+		color: white;
+		font-weight: bold;
+		float: right;
+		font-size: 22px;
+		line-height: 20px;
+		cursor: pointer;
+		transition: 0.3s;
+	}
+	/* When moving the mouse over the close button */
+	
+	.closebtn:hover {
+		color: black;
+	}
+	/* Style the button that is used to open and close the collapsible content */
+	.collapsible {
+	  background-color: #eee;
+	  color: #444;
+	  cursor: pointer;
+	  padding: 18px;
+	  margin-top: 20px;
+	  border: none;
+	  text-align: left;
+	  outline: none;
+	  font-size: 15px;
+	}
+
+	/* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
+	.active, .collapsible:hover {
+	  background-color: #ccc;
+	}
+
+	/* Style the collapsible content. Note: hidden by default */
+	#tmh {
+	  padding: 0 18px;
+	  display: none;
+	  overflow: hidden;
+	  background-color: #f1f1f1;
+	}
+	</style>
+</head>
+
+<body>
+	<div style="margin-left: 15%">
+		<div style="display: flex;" class="flex-container">
+			<div style="flex: 1;" class="flex-child magenta">
+				<h2>TBA Extraction and Formatting</h2>
+				<p style="display: none;"> <span style="font-weight: bold; color: red;">&#9888;</span> This site was made by jtoma for personal use. Use at your own risk. <span style="font-weight: bold; color: red;">&#9888;</span> </p>
+				<p style="width: 500px; margin-bottom: 20px;">Drop any text containing TBAs (info from driver, Cortex, CopyFish...) in the box below, the cleaned TBAs will be on your clipboard!</p>
+				<textarea type="text" id="infoFromDriver" name="ifd" value="Paste text here" style="width: 450px; height: 200px" onPaste="setTimeout(function(){clean('scc')},5);" autofocus> </textarea>
+				<br>
+				<!-- <input type="radio" id="tbcRadio"> -->
+				<!-- <input type="button" id="tbcToggle" value="TBC" onClick="toggleTBC();"> -->
+				<input type="radio" id="copyFishRadio">
+				<input type="button" id="copyFishToggle" value="CopyFish" onClick="toggleCopyFish();">
+				<div style="margin-top:20px; margin-bottom:20px;">
+					<button style="width:120px; top:100%; left: 50%; margin-left=-120px;" class="tooltip" title="newline separated" onClick="clean('scc')">SCC Format</button>
+					<button style="width:120px; top:100%; left: 50%; margin-left=-120px;" class="tooltip" title="comma separated" onClick="clean('dexter')">Comma Format</button>
+					<button style="width:120px; top:100%; left: 50%; margin-left=-120px;" class="tooltip" title="comma separated, truncated" onClick="clean('chime')">Chime Format</button>
+				</div>
+				<div class="dupAlert" id="dupAlert" style="display: none;">
+					<span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+					<p id="dupAlertMsg"></p>
+				</div>
+				<div class="lengthAlert" id="lengthAlert" style="display: none;">
+					<span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 
+					<p id="lengthAlertMsg" style="white-space: pre-line;"></p>
+				</div>
+				<div id="status"></div>
+				<br>
+				<div id="result" style="width: 500px; white-space: pre-wrap">
+					<p>Any TBAs will appear here</p>
+				</div>
+			</div>
+			<div style="flex: 1; margin-left: 30px;" class="flex-child magenta">
+				<h5>November 26, 2021</h5>
+				<h2>Creators</h2> jtoma - coding &#128519;
+				<br> Paul - deduplication &#129497;
+				<br> Noah - TBC support &#128663;
+				<br> Carson - deduplication alert &#128161;
+				<br> Sherri - length warning &#127826;
+				<br> Raymond - tell me how &#127823;
+				<br>
+				<button type="button" class="collapsible" onclick="handleCollapsible();">Tell Me How</button>
+				<div id="tmh" style="width: 500px; display: none;">
+					<h2>TBA Extracting and Formatting</h4>
+					<h4>Purpose</h4>
+					<p>To easily extract TBA’s from text and websites and rearrange into neatly formatted outputs for SCC and Chime.</p>
+					<h4>Instructions</h4>
+					<ol>
+						<li>Copy (ctrl + c) text from sources such as Grok, Chime, or Cortex.</li>
+						<li>
+							Paste (ctrl + v) text into the text box on the TBA Extraction and Formatting tool
+							<ul><li>If your text is from CopyFish, please click the button below the text box.</li></ul>
+						</li>
+						<li>
+							Choose your output format
+							<ul>
+								<li><b>SCC Format</b> – TBA’s are stacked on top of each other to search in SCC. This is the default format.</li>
+								<li><b>Comma Format</b> – TBA’s are separated by commas with minimal line breaks.</li>
+								<li><b>Chime Format</b> – Displays the number of TBA’s extracted while also specifying the first three listed. Perfect for communicating to DA/DSP’s how many were actioned and from what group of TBA’s given.</li>
+							</ul>
+						</li>
+					</ol>
+					<h4>FAQs</h4>
+					<ol>
+						<li><b>What happens if there are duplicate TBA’s entered? </b> – Duplicate TBA’s are highlighted in an orange box and all but one are removed from the output.</li>
+						<li><b>What if TBA’s entered are too long/short?  </b> – TBA’s that are too long or short by 1 digit are highlighted in a red box and are removed from the output. Numbers that have either fewer than 11 or more than 13 digits are ignored outright. </li>
+					</ol>
+				</div>
+			</div>
+		</div>
+		<script>
+		function clean(format) {
+			// remove alert 
+			resetNotifications();
+
+			// get text from textarea
+			var ifd = document.getElementById("infoFromDriver").value;
+			
+			// detect and fix copyfish errors
+			// 'oRe' is (O)ptical Character Recognition (R)egular (E)xpression
+			// the the regular expression for the OCR output
+			let copyFishChecked = document.getElementById("copyFishRadio").checked;
+			if (copyFishChecked) {
+				const oRe = /(?!s .*)[ ODsS0-9]{12}/g;
+				ifd = ifd.replace(oRe, copyFish);
+			}
+			
+			// check length (only works for 11 and 13 digits)
+			const [hasLengthViolations, lengthMsg] = checkLength(ifd);
+			if(hasLengthViolations) {
+				lengthAlertDiv.style.display = "block";
+				lenAlertMsgDiv.innerHTML += lengthMsg;
+			}
+			
+			// extract tbas
+			// const re = /(?<!\d)\d{12}(?!\d)/g;
+			const re = /\d{12}/g;
+			const tbasWithDupes = ifd.match(re)
+			
+			// remove duplicates and set alert
+			let tbas = [...new Set(tbasWithDupes)]
+			const [hasDuplicates, dupMsg] = handleDuplicates(tbasWithDupes, tbas);
+			if(hasDuplicates) {
+				dupAlertDiv.style.display = "block";
+				dupAlertMsgDiv.innerHTML = dupMsg;
+			}
+			
+			// add the right prefix 
+			const tbcFlag = checkTbc(ifd, tbasWithDupes);
+			tbas = prefix(tbas, tbcFlag);
+			
+			// return formatted string
+			const formattedTbas = formatFxn(format, tbas);
+			document.getElementById("result").innerHTML = formattedTbas;
+			
+			// copy to clipboard
+			navigator.clipboard.writeText(formattedTbas)
+			
+			// notification
+			const numTbas = tbas.length
+			if(numTbas > 0) {
+				document.getElementById("status").style.color = "green";
+				document.getElementById("status").innerHTML = numTbas + " TBAs have been copied to your clipboard in " + format + " format.";
+			} else {
+				document.getElementById("status").style.color = "red";
+				document.getElementById("status").innerHTML = "Sorry, no TBAs were found";
+			}
+		}
+		
+		function resetNotifications() {
+			dupAlertDiv = document.getElementById("dupAlert")
+			dupAlertDiv.style.display = "none";
+			dupAlertMsgDiv = document.getElementById("dupAlertMsg");
+			dupAlertMsgDiv.innerHTML = '';
+			lengthAlertDiv = document.getElementById("lengthAlert");
+			lengthAlertDiv.style.display = "none";
+			lenAlertMsgDiv = document.getElementById("lengthAlertMsg");
+			lenAlertMsgDiv.innerHTML = '';
+		}
+
+		function copyFish(match) {
+			match = match.replace(/O/g, "0")
+			match = match.replace(/D/g, "0")
+			match = match.replace(/s/g, "5")
+			match = match.replace(/S/g, "5")
+			match = match.replace(/ /g, "")
+			return match
+		}
+		
+		function checkTbc(ifd, withDupes) {
+			console.log('in check tbc');
+			let tbcFlag = false;
+			const re = /tbc/ig;
+			const tbcs = ifd.match(re);
+			if (tbcs && withDupes) {
+				console.log('tbcs and withDupes both exist');
+				console.log('tbcs:', tbcs);
+				console.log('withDupes:', withDupes);
+				if (withDupes.length == tbcs.length) {
+					console.log('switching tbcflag');
+					tbcFlag = true;
+				}
+			}
+			return tbcFlag;
+		}
+
+		function toggleTBC() {
+			radio = document.getElementById("tbcRadio");
+			radio.checked = !radio.checked;
+		}
+		function toggleCopyFish() {
+			let radio = document.getElementById("copyFishRadio");
+			radio.checked = !radio.checked;
+		}
+		
+		function checkLength(ifd) {
+			const sRe = /(?<!\d)\d{11}(?!\d)/g;
+			let shortTbas = ifd.match(sRe);
+			console.log('shortTBas:', shortTbas);
+			let msg = '';
+			let hasLengthViolations = false;
+			console.log('message 1:', msg);
+			if(shortTbas) {
+				hasLengthViolations = true;
+				console.log('has length violations');
+				if(shortTbas.length > 1) {
+					msg = 'Sorry, but the following TBAs are too short: ';
+				} else {
+					msg = 'Sorry, but the following TBA is too short: ';
+				}
+				console.log('message 2:', msg);
+				shortTbas = prefix(shortTbas);
+				shortTbas = formatFxn('dexter', shortTbas);
+				msg += shortTbas;
+				console.log('message 3:', msg);
+			}
+			const lRe = /(?<!\d)\d{13}(?!\d)/g;
+			let longTbas = ifd.match(lRe);
+			if(longTbas) {
+				hasLengthViolations = true;
+				console.log('has length violations');
+				msg += "\n";
+				if(longTbas.length > 1) {
+					msg += 'Sorry, but the following TBAs are too long: ';
+				} else {
+					msg += 'Sorry, but the following TBAs is too long: ';
+				}
+				console.log('message 4:', msg);
+				longTbas = prefix(longTbas);
+				longTbas = formatFxn('dexter', longTbas);
+				msg += longTbas;
+				console.log('message 5:', msg);
+			}
+			return [hasLengthViolations, msg];
+		}
+		
+		function prefix(tbas, tbcFlag) {
+			for(var i = 0; i < tbas.length; i++) {
+				if(!tbcFlag) {
+					tbas[i] = "TBA" + tbas[i];
+				} else {
+					tbas[i] = "TBC" + tbas[i];
+				}
+			}
+			return tbas;
+		}		
+		
+		function formatFxn(format, tbas) {
+			var ret;
+			if(format === 'scc') {
+				ret = tbas.toString()
+				ret = ret.replace(/,/g, "\n");
+			} else if(format === 'chime') {
+				var longList = false;
+				const listLen = tbas.length;
+				if(listLen > 3) {
+					longList = true;
+					ret = tbas.slice(0, 3);
+					ret = ret.toString()
+					ret = ret.replace(/,/g, ", ");
+					ret = listLen + " TBAs (" + ret + "...)";
+				} else {
+					ret = tbas.toString()
+					ret = ret.replace(/,/g, ", ");
+				}
+			} else if(format == 'dexter') {
+				ret = tbas.toString()
+				ret = ret.replace(/,/g, ", ");
+			}
+			return ret;
+		}
+		
+		function handleDuplicates(tbasWithDupes, tbas) {
+			let dupMsg = '';
+			let hasDuplicates = false;
+			if(tbasWithDupes && tbas) {
+				if(tbas.length < tbasWithDupes.length) {
+					// duplicate alert
+					hasDuplicates = true;
+					var cache = {};
+					var repeats = [];
+					for(var i = 0, len = tbasWithDupes.length; i < len; i++) {
+						if(cache[tbasWithDupes[i]] === true) {
+							repeats.push(tbasWithDupes[i]);
+						} else {
+							cache[tbasWithDupes[i]] = true;
+						}
+					}
+					repeats = prefix(repeats);
+					dupMsg = formatFxn('dexter', repeats);
+					dupMsg = "Duplicate(s): " + dupMsg;
+
+				}
+			}
+			return [hasDuplicates, dupMsg];
+		}
+		
+		function handleCollapsible() {
+			var tmh = document.getElementById("tmh");
+			if (tmh.style.display === "block") {
+			  tmh.style.display = "none";
+			} else {
+			  tmh.style.display = "block";
+			}
+		}
+			
+		</script>
+</body>
+
+</html>
